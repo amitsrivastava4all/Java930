@@ -10,13 +10,46 @@ public class TestStudent {
 		ram.setPhone("2222");
 		System.out.println(ram.getPhone());
 		//ram = null; // First Way , ready for GC
-		Student shyam = new Student();
-		ram = shyam;  // 2nd Way
+		Student shyam = new Student(1001, "Ram", 3, "BTECH");
+		//ram = shyam;  // 2nd Way
+		if(ram.equals(shyam)){
+			
+		}
+		if(ram==shyam){
+			System.out.println("Reference Same");
+		}
+		else
+		{
+			System.out.println("Refer Differ");
+		}
+		if(ram.hashCode()==shyam.hashCode()){
+			System.out.println("Bucket Same");
+		}
+		else{
+			System.out.println("Bucket Not Same");
+		}
 		
+		if(ram.equals(shyam)){
+			System.out.println("Same ");
+		}
+		else
+		{
+			System.out.println("NotSame");
+		}
 		if(true){
 			Student mike = new Student();  // mike is eliagable for GC once if is over
 		}
 		
+		// String Equals Demo
+		String a = new String("Hello");
+		String b = new String("Hello");
+		if(a.equals(b)){
+			System.out.println("Same String");
+		}
+		else
+		{
+			System.out.println("Not Same String");
+		}
 		//ram.print();
 		//System.out.println("******************************");
 		/*Student shyam = new Student();  

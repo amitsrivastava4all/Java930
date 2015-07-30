@@ -106,6 +106,11 @@ public class Student  {
 		return "";
 	}
 	
+	@Override
+	public int hashCode(){
+		return 100;
+	}
+	
 	// Secondary Fields + Limited Access for Print
 	
 	
