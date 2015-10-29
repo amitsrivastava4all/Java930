@@ -8,9 +8,11 @@ import java.awt.event.WindowEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.IOException;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -23,6 +25,9 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+
+import java.awt.Color;
+import java.awt.Font;
 
 
 public class NotePadDemo extends JFrame {
@@ -80,6 +85,7 @@ public class NotePadDemo extends JFrame {
 		
 		scrollPane.setBounds(10, 21, 414, 238);
 		getContentPane().add(scrollPane);
+		textArea.setFont(new Font("Monospaced", Font.BOLD, 18));
 		scrollPane.setViewportView(textArea);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -125,6 +131,28 @@ public class NotePadDemo extends JFrame {
 		});
 		
 		mnFile.add(mntmPrint);
+		
+	
+		JMenuItem foreColor = new JMenuItem("ForeGroundColor");
+		foreColor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				changeForeGround();
+			}
+		});
+		foreColor.setMnemonic('E');
+		JMenuItem BackColor = new JMenuItem("BackGroundColor");
+		BackColor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				changeBackGround();
+			}
+		});
+		BackColor.setMnemonic('B');
+		JMenu colorMB = new JMenu("Color");
+		colorMB.setMnemonic('C');
+		colorMB.add(foreColor);
+		colorMB.add(BackColor);
+		mnFile.add(colorMB);
+		//mntmColor.add(colorMB);
 		mnFile.addSeparator();
 		mnFile.add(mntmExit);
 	
@@ -133,11 +161,33 @@ public class NotePadDemo extends JFrame {
 	private void openDialog(){
 		JFileChooser chooser = new JFileChooser();
 		chooser.showOpenDialog(this);
+		try {
+			long startTime = System.currentTimeMillis();
+			String result = ReadWriteOperation.readFile(chooser.getSelectedFile());
+			long endTime = System.currentTimeMillis();
+			System.out.println("Total Time Taken "+(endTime - startTime));
+			
+			textArea.setText(result);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(this, "Unable to open a file "+e);
+			e.printStackTrace();
+		}
+		
 	}
 	private void saveDialog(){
 		// System Calls
 		JFileChooser chooser = new JFileChooser();
 		chooser.showSaveDialog(this);
+		System.out.println("Current Dir "+chooser.getCurrentDirectory());
+		System.out.println("Selected File "+chooser.getSelectedFile());
+		try {
+			ReadWriteOperation.writeInAFile(chooser.getSelectedFile(), textArea.getText());
+			this.setTitle(chooser.getSelectedFile().getName());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(this, "Error During Save "+e);
+			e.printStackTrace();
+		}
 	}
 	private void showPrinter(){
 		// System Calls
@@ -150,6 +200,17 @@ public class NotePadDemo extends JFrame {
 	         }
 	     }   
 	}
+	
+	private void changeForeGround(){
+		Color selectedColor = JColorChooser.showDialog(this, "My Color Chooser", Color.RED);
+		textArea.setForeground(selectedColor);
+	}
+	
+	private void changeBackGround(){
+		Color selectedColor = JColorChooser.showDialog(this, "My Color Chooser", Color.RED);
+		textArea.setBackground(selectedColor);
+	}
+	
 	private void windowClose(boolean isNew){
 		if(textArea.getText().trim().length()>0){
 			int choice = JOptionPane.showConfirmDialog(NotePadDemo.this, "Do u want to Save or Not","Notepad-2015",JOptionPane.YES_NO_CANCEL_OPTION);
